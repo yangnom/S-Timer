@@ -29,7 +29,7 @@ public class Stimer: ObservableObject {
      public func startTimer(timerLength: Double, happensEveryTick: @escaping (Double) -> (), timerEnded: @escaping () -> ()) {
             // set everything up
             self.timerLength = timerLength
-        print("timerLength is: \(self.timerLength)")
+            print("timerLength is: \(self.timerLength)")
             let now = Date()
             guard paused == true else { return }
             paused = false
