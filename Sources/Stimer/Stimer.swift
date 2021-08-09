@@ -9,8 +9,8 @@ import SwiftUI
 public class Stimer {
         var subscriptions = Set<AnyCancellable>()
         
-        @Published var timerLength = 120.0
-        @Published var elapsedTime = 30.0
+        @Published public var timerLength = 120.0
+        @Published public var elapsedTime = 30.0
         var remainingTime = 0.0
         var paused = true
         
