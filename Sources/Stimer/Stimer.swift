@@ -26,7 +26,7 @@ public class Stimer {
         print("Loaded")
     }
     
-        func startTimer(timerLength: Double, happensEveryTick: @escaping (Double) -> (), timerEnded: @escaping () -> ()) {
+     public func startTimer(timerLength: Double, happensEveryTick: @escaping (Double) -> (), timerEnded: @escaping () -> ()) {
             // set everything up
             let now = Date()
             guard paused == true else { return }
