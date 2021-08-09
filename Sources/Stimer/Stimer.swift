@@ -22,6 +22,10 @@ public class Stimer {
             elapsedTime / timerLength
         }
         
+    public init() {
+        print("Loaded")
+    }
+    
         func startTimer(timerLength: Double, happensEveryTick: @escaping (Double) -> (), timerEnded: @escaping () -> ()) {
             // set everything up
             let now = Date()
