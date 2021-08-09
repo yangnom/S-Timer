@@ -28,6 +28,7 @@ public class Stimer {
     
      public func startTimer(timerLength: Double, happensEveryTick: @escaping (Double) -> (), timerEnded: @escaping () -> ()) {
             // set everything up
+        self.timerLength = timerLength
             let now = Date()
             guard paused == true else { return }
             paused = false
