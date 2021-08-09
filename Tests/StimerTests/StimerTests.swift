@@ -13,33 +13,25 @@
 
     @available(watchOS 6.0, *)
     class StimerTests: XCTestCase {
+        // why does this need to be force unwrapped?
         private var cancellables: Set<AnyCancellable>!
 
         override func setUp() {
             super.setUp()
             cancellables = []
         }
-
-        func testIdentifyingUsernames() {
-            let stimer = Stimer()
         
-            // Declaring local variables that we'll be able to write
-            // our output to, as well as an expectation that we'll
-            // use to await our asynchronous result:
-            var error: Error?
-            let expectation = self.expectation(description: "Tokenization")
-
-            stimer.startTimer(timerLength: 10, happensEveryTick: {_ in print("Tick")}, timerEnded: {
+        func testNewTimer() {
+            let stimer = Stimer()
+            
+            let expectation = self.expectation(description: "Timer complete")
+            
+            print("Test started")
+            stimer.startTimer(timerLength: 5, happensEveryTick: {print("\(stimer.ticks): ticked!")}, timerEnded: {print("Timer finished!")
                 expectation.fulfill()
             })
-
-            // Awaiting fulfilment of our expecation before
-            // performing our asserts:
-            waitForExpectations(timeout: 10)
-
-            // Asserting that our Combine pipeline yielded the
-            // correct output:
-            XCTAssertNil(error)
-            XCTAssertEqual(tokens, [.text("Hello "), .username("john")])
+            
+            waitForExpectations(timeout: 8)
+            XCTAssert(stimer.ticks == 5, "Timer ticked \(stimer.ticks) times")
         }
     }

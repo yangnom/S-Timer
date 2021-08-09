@@ -11,9 +11,13 @@ public class Stimer: ObservableObject {
         
         @Published public var timerLength = 120.0
         @Published public var elapsedTime = 30.0
-        var remainingTime = 0.0
         var paused = true
-        
+        var ticks = 0
+
+    // TODO: var needs better name
+        var timeElapsedBeforePause = 0.0
+
+    
         var timeLeft: Double {
             timerLength - elapsedTime
         }
@@ -26,10 +30,9 @@ public class Stimer: ObservableObject {
         print("timer loaded")
     }
     
-     public func startTimer(timerLength: Double, happensEveryTick: @escaping (Double) -> (), timerEnded: @escaping () -> ()) {
+     public func oldTimer(timerLength: Double, happensEveryTick: @escaping () -> (), timerEnded: @escaping () -> ()) {
             // set everything up
             self.timerLength = timerLength
-            print("timerLength is: \(self.timerLength)")
             let now = Date()
             guard paused == true else { return }
             paused = false
@@ -40,21 +43,35 @@ public class Stimer: ObservableObject {
                 .prefix(while: { _ in self.timeLeft > 0.0
                     && self.paused == false
                 })
-                .map { $0.timeIntervalSince(now) + self.remainingTime }
+                .map { $0.timeIntervalSince(now) + self.timeElapsedBeforePause }
                 .sink(receiveCompletion: {_ in
                     // timer ends
                     if self.paused == false {
                         self.elapsedTime = 0.0
-                        self.remainingTime = 0.0
+                        self.timeElapsedBeforePause = 0.0
                         self.paused = true
                         timerEnded()
                     } else {
                     // timer pauses
-                        self.remainingTime = self.elapsedTime
+                        self.timeElapsedBeforePause = self.elapsedTime
                     }
                 }, receiveValue: {
                     self.elapsedTime = $0
-                    happensEveryTick(self.percentTimerDone)
+                    happensEveryTick()
                 })
                 .store(in: &subscriptions)}
+    
+    
+    public func startTimer(timerLength: Double, happensEveryTick: @escaping () -> (), timerEnded: @escaping () -> ()) {
+        
+        Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .prefix(while: { _ in self.ticks < Int(timerLength) })
+            .sink(receiveCompletion: {_ in
+                timerEnded()
+            }, receiveValue: {date in
+                happensEveryTick()
+                self.ticks += 1
+            }).store(in: &subscriptions)
+    }
 }
