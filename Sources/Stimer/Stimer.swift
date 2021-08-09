@@ -6,7 +6,7 @@ import SwiftUI
 @available(iOS 13.0, *)
 @available(macOS 10.15, *)
 
-class Stimer {
+public class Stimer {
         var subscriptions = Set<AnyCancellable>()
         
         @Published var timerLength = 120.0
