@@ -6,7 +6,7 @@ import SwiftUI
 @available(iOS 13.0, *)
 @available(macOS 10.15, *)
 
-public class Stimer {
+public class Stimer: ObservableObject {
         var subscriptions = Set<AnyCancellable>()
         
         @Published public var timerLength = 120.0
@@ -23,7 +23,7 @@ public class Stimer {
         }
         
     public init() {
-        print("Loaded")
+        print("timer loaded")
     }
     
      public func startTimer(timerLength: Double, happensEveryTick: @escaping (Double) -> (), timerEnded: @escaping () -> ()) {
