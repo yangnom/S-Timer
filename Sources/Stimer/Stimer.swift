@@ -11,18 +11,18 @@ public class Stimer: ObservableObject {
         
         @Published public var timerLength = 120.0
         @Published public var elapsedTime = 30.0
-        var paused = true
-        var ticks = 0
+        public var paused = true
+        public var ticks = 0
 
     // TODO: var needs better name
-        var timeElapsedBeforePause = 0.0
+        public var timeElapsedBeforePause = 0.0
 
     
-        var timeLeft: Double {
+        public var timeLeft: Double {
             timerLength - elapsedTime
         }
         
-        var percentTimerDone: Double {
+        public var percentTimerDone: Double {
             elapsedTime / timerLength
         }
         
