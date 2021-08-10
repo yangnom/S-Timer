@@ -1,21 +1,21 @@
     import XCTest
     import Combine
     @testable import Stimer
-
-//    final class StimerTests: XCTestCase {
-////        func testExample() {
-////            // This is an example of a functional test case.
-////            // Use XCTAssert and related functions to verify your tests produce the correct
-////            // results.
-////            XCTAssertEqual(Stimer().text, "Hello, World!")
-////        }
-//    }
-
+    
+    //    final class StimerTests: XCTestCase {
+    ////        func testExample() {
+    ////            // This is an example of a functional test case.
+    ////            // Use XCTAssert and related functions to verify your tests produce the correct
+    ////            // results.
+    ////            XCTAssertEqual(Stimer().text, "Hello, World!")
+    ////        }
+    //    }
+    
     @available(watchOS 6.0, *)
     class StimerTests: XCTestCase {
         // why does this need to be force unwrapped?
         private var cancellables: Set<AnyCancellable>!
-
+        
         override func setUp() {
             super.setUp()
             cancellables = []
@@ -54,5 +54,30 @@
             
             waitForExpectations(timeout: 8)
             XCTAssert(stimer.ticks == 5, "Timer ticked \(stimer.ticks) times")
+        }
+        
+        func test_percentTimerDone() {
+            let stimer = Stimer()
+            let secondsAfterToTestFor = 3
+            var counter = 0
+            
+            let expectation = self.expectation(description: "will complete")
+            
+            stimer.startTimer(timerLength: 5, happensEveryTick: {
+                print("\(stimer.ticks): ticked!")
+                counter += 1
+                
+                if counter % secondsAfterToTestFor == 0 {
+                    expectation.fulfill()
+                }
+            },
+            timerEnded: {
+                print("Timer finished!")
+//                expectation.fulfill()
+            })
+            
+            waitForExpectations(timeout: 3)
+            print("PercentTimerDone is: \(stimer.percentTimerDone)")
+            XCTAssert(stimer.percentTimerDone > 0.59, "The timer was \(stimer.percentTimerDone) after 3 seconds")
         }
     }

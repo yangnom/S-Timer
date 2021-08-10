@@ -10,7 +10,7 @@ public class Stimer: ObservableObject {
         var subscriptions = Set<AnyCancellable>()
         
         @Published public var timerLength = 120.0
-        @Published public var elapsedTime = 30.0
+        @Published public var elapsedTime = 15.0
         public var paused = true
         public var running = false
         public var ticks = 0
@@ -65,16 +65,20 @@ public class Stimer: ObservableObject {
     
     public func startTimer(timerLength: Double, happensEveryTick: @escaping () -> (), timerEnded: @escaping () -> ()) {
         guard self.running == false else { return }
+        let timerStartTime = Date()
         self.running = true
+        self.timerLength = timerLength
         
         Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
 //            .prefix(while: { _ in self.ticks < Int(timerLength) && self.running == true })
             .prefix(while: { _ in self.ticks < Int(timerLength)})
+            .map { $0.timeIntervalSince(timerStartTime) }
             .sink(receiveCompletion: {_ in
                 timerEnded()
-            }, receiveValue: {date in
+            }, receiveValue: {elapsedTime in
                 happensEveryTick()
+                self.elapsedTime = elapsedTime
                 self.ticks += 1
             }).store(in: &subscriptions)
     }
