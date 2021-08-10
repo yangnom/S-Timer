@@ -12,6 +12,7 @@ public class Stimer: ObservableObject {
         @Published public var timerLength = 120.0
         @Published public var elapsedTime = 30.0
         public var paused = true
+        public var running = false
         public var ticks = 0
 
     // TODO: var needs better name
@@ -63,10 +64,13 @@ public class Stimer: ObservableObject {
     
     
     public func startTimer(timerLength: Double, happensEveryTick: @escaping () -> (), timerEnded: @escaping () -> ()) {
+        guard self.running == false else { return }
+        self.running = true
         
         Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
-            .prefix(while: { _ in self.ticks < Int(timerLength) })
+//            .prefix(while: { _ in self.ticks < Int(timerLength) && self.running == true })
+            .prefix(while: { _ in self.ticks < Int(timerLength)})
             .sink(receiveCompletion: {_ in
                 timerEnded()
             }, receiveValue: {date in

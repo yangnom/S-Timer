@@ -21,12 +21,33 @@
             cancellables = []
         }
         
+        //test to see if timer ticks every second and ends gracefully
         func testNewTimer() {
             let stimer = Stimer()
             
             let expectation = self.expectation(description: "Timer complete")
             
             print("Test started")
+            stimer.startTimer(timerLength: 5, happensEveryTick: {print("\(stimer.ticks): ticked!")}, timerEnded: {print("Timer finished!")
+                expectation.fulfill()
+            })
+            
+            waitForExpectations(timeout: 8)
+            XCTAssert(stimer.ticks == 5, "Timer ticked \(stimer.ticks) times")
+        }
+        
+        // test for multiple timers at once
+        func test_cantSetMultipleTimers() {
+            let stimer = Stimer()
+            
+            let expectation = self.expectation(description: "One timer")
+            
+            print("multiple timers test started")
+            
+            stimer.startTimer(timerLength: 5, happensEveryTick: {print("\(stimer.ticks): ticked!")}, timerEnded: {print("Timer finished!")
+                expectation.fulfill()
+            })
+            
             stimer.startTimer(timerLength: 5, happensEveryTick: {print("\(stimer.ticks): ticked!")}, timerEnded: {print("Timer finished!")
                 expectation.fulfill()
             })
