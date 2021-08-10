@@ -92,4 +92,21 @@
             waitForExpectations(timeout: 10)
             XCTAssert(stimer.percentTimerDone == 1.0, "Percent Done: \(stimer.percentTimerDone)")
         }
+        
+        func test_firstTickPercentTimerDoneIsNotGreaterThan1() {
+            let stimer = Stimer()
+            let expectation = expectation(description: "not 1")
+            var tickHit1 = false
+            
+            stimer.startTimer(timerLength: 5, happensEveryTick: {
+                if stimer.percentTimerDone >= 1.0 {
+                    tickHit1 = true
+                }
+            }) {
+                expectation.fulfill()
+            }
+            
+            waitForExpectations(timeout: 7)
+            XCTAssert(tickHit1 == false)
+        }
     }

@@ -31,6 +31,29 @@ public class Stimer: ObservableObject {
         print("timer loaded")
     }
     
+    public func startTimer(timerLength: Double, happensEveryTick: @escaping () -> (), timerEnded: @escaping () -> ()) {
+        guard self.running == false else { return }
+        let timerStartTime = Date()
+        self.running = true
+        self.elapsedTime = 0.0
+        self.timerLength = timerLength
+        
+        Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+//            .prefix(while: { _ in self.ticks < Int(timerLength) && self.running == true })
+            .prefix(while: { _ in self.ticks < Int(timerLength)})
+            .map { $0.timeIntervalSince(timerStartTime) }
+            .sink(receiveCompletion: {_ in
+                // make sure that the timer ends with percentDone = 1.0
+                self.elapsedTime = self.timerLength
+                timerEnded()
+            }, receiveValue: {elapsedTime in
+                happensEveryTick()
+                self.elapsedTime = elapsedTime
+                self.ticks += 1
+            }).store(in: &subscriptions)
+    }
+    
      public func oldTimer(timerLength: Double, happensEveryTick: @escaping () -> (), timerEnded: @escaping () -> ()) {
             // set everything up
             self.timerLength = timerLength
@@ -63,26 +86,5 @@ public class Stimer: ObservableObject {
                 .store(in: &subscriptions)}
     
     
-    public func startTimer(timerLength: Double, happensEveryTick: @escaping () -> (), timerEnded: @escaping () -> ()) {
-        guard self.running == false else { return }
-        let timerStartTime = Date()
-        self.running = true
-        self.timerLength = timerLength
-        
-        Timer.publish(every: 1, on: .main, in: .common)
-            .autoconnect()
-//            .prefix(while: { _ in self.ticks < Int(timerLength) && self.running == true })
-            .prefix(while: { _ in self.ticks < Int(timerLength)})
-            .map { $0.timeIntervalSince(timerStartTime) }
-            .sink(receiveCompletion: {_ in
-                // make sure that the timer ends with percentDone = 1.0
-                // TODO: Doesn't work
-                self.elapsedTime = self.timerLength
-                timerEnded()
-            }, receiveValue: {elapsedTime in
-                happensEveryTick()
-                self.elapsedTime = elapsedTime
-                self.ticks += 1
-            }).store(in: &subscriptions)
-    }
+
 }
