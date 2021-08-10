@@ -73,11 +73,23 @@
             },
             timerEnded: {
                 print("Timer finished!")
-//                expectation.fulfill()
+                //                expectation.fulfill()
             })
             
             waitForExpectations(timeout: 3)
             print("PercentTimerDone is: \(stimer.percentTimerDone)")
             XCTAssert(stimer.percentTimerDone > 0.59, "The timer was \(stimer.percentTimerDone) after 3 seconds")
+        }
+        
+        func test_timerFinishesWith100PercentDone() {
+            let stimer = Stimer()
+            let expectation = expectation(description: "%100 done")
+            
+            stimer.startTimer(timerLength: 5, happensEveryTick: {print("\(stimer.ticks) tick!")}) {
+                expectation.fulfill()
+            }
+            
+            waitForExpectations(timeout: 10)
+            XCTAssert(stimer.percentTimerDone == 1.0, "Percent Done: \(stimer.percentTimerDone)")
         }
     }

@@ -76,6 +76,7 @@ public class Stimer: ObservableObject {
             .map { $0.timeIntervalSince(timerStartTime) }
             .sink(receiveCompletion: {_ in
                 // make sure that the timer ends with percentDone = 1.0
+                // TODO: Doesn't work
                 self.elapsedTime = self.timerLength
                 timerEnded()
             }, receiveValue: {elapsedTime in
