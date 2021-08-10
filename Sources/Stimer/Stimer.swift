@@ -75,6 +75,8 @@ public class Stimer: ObservableObject {
             .prefix(while: { _ in self.ticks < Int(timerLength)})
             .map { $0.timeIntervalSince(timerStartTime) }
             .sink(receiveCompletion: {_ in
+                // make sure that the timer ends with percentDone = 1.0
+                self.elapsedTime = self.timerLength
                 timerEnded()
             }, receiveValue: {elapsedTime in
                 happensEveryTick()
