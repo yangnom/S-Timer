@@ -54,37 +54,16 @@ public class Stimer: ObservableObject {
             }).store(in: &subscriptions)
     }
     
-     public func oldTimer(timerLength: Double, happensEveryTick: @escaping () -> (), timerEnded: @escaping () -> ()) {
-            // set everything up
-            self.timerLength = timerLength
-            let now = Date()
-            guard paused == true else { return }
-            paused = false
-                        
-            // start the timer
-            Timer.publish(every: 1, on: .main, in: .common)
-                .autoconnect()
-                .prefix(while: { _ in self.timeLeft > 0.0
-                    && self.paused == false
-                })
-                .map { $0.timeIntervalSince(now) + self.timeElapsedBeforePause }
-                .sink(receiveCompletion: {_ in
-                    // timer ends
-                    if self.paused == false {
-                        self.elapsedTime = 0.0
-                        self.timeElapsedBeforePause = 0.0
-                        self.paused = true
-                        timerEnded()
-                    } else {
-                    // timer pauses
-                        self.timeElapsedBeforePause = self.elapsedTime
-                    }
-                }, receiveValue: {
-                    self.elapsedTime = $0
-                    happensEveryTick()
-                })
-                .store(in: &subscriptions)}
-    
+    public func resetTimer() {
+        subscriptions
+            .forEach { $0.cancel() }
+        
+        elapsedTime = 0.0
+        paused = true
+        running = false
+        ticks = 0
+
+    }
     
 
 }
