@@ -13,7 +13,6 @@ public class Stimer: ObservableObject {
         @Published public var elapsedTime = 15.0
         public var paused = true
         public var running = false
-//        public var ticks = 0
 
     // TODO: var needs better name
         public var timeElapsedBeforePause = 0.0
@@ -40,18 +39,14 @@ public class Stimer: ObservableObject {
         
         Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
-//            .prefix(while: { _ in self.ticks < Int(timerLength) && self.running == true })
-//            .prefix(while: { _ in self.ticks < Int(timerLength)})
             .prefix(while: { _ in self.elapsedTime < self.timerLength })
             .map { $0.timeIntervalSince(timerStartTime) }
             .sink(receiveCompletion: {_ in
-                // make sure that the timer ends with percentDone = 1.0
                 self.elapsedTime = self.timerLength
                 timerEnded()
             }, receiveValue: {elapsedTime in
                 happensEveryTick()
                 self.elapsedTime = elapsedTime
-//                self.ticks += 1
             }).store(in: &subscriptions)
     }
     
@@ -62,7 +57,6 @@ public class Stimer: ObservableObject {
         elapsedTime = 0.0
         paused = true
         running = false
-//        ticks = 0
 
     }
     
